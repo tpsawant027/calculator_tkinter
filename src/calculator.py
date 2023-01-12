@@ -45,12 +45,11 @@ def evaluate():
     eqn = parse_input(eqn)
     entry.delete(0.0, tk.END)
     glbs_dct = {
-        k: v
-        for k, v in globals().items()
-        if ((k.startswith("_") and k != "__builtins__") or k == "sqrt")
+        k: v for k, v in globals().items() if (k.startswith("__") or k == "sqrt")
     }
+    glbs_dct["__builtins__"] = {}
     try:
-        entry.insert(tk.END, eval(eqn, globals=glbs_dct))
+        entry.insert(tk.END, eval(eqn, glbs_dct))
     except:
         entry.insert(tk.END, "INVALID INPUT")
 
