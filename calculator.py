@@ -1,4 +1,4 @@
-import math
+from math import pi, e, sqrt
 import tkinter as tk
 
 operator_list = [
@@ -15,9 +15,8 @@ operator_dict = {
     operator_list[0][3]: " ** ",
     operator_list[1][3]: " / ",
     operator_list[4][3]: " - ",
-    operator_list[0][1]: str(math.pi),
-    operator_list[0][2]: str(math.e),
-    operator_list[0][0]: "0.5 ** ",
+    operator_list[0][1]: str(pi),
+    operator_list[0][2]: str(e),
 }
 
 
@@ -27,20 +26,26 @@ def backspace():
     entry.insert(tk.END, nw)
 
 
+def _rep(s: str) -> str:
+    s2 = ""
+    for i, c in enumerate(s):
+        if c == "\N{SQUARE ROOT}":
+            s2 = s[:i] + "sqrt("
+            j = i + 1
+            while j < len(s) and s[j] != " ":
+                s2 += s[j]
+                j += 1
+            s2 += ")" + s[j:]
+    return s2
+
+
 def rep(s: str):
-    xl = list(operator_dict.keys())
-    if "\N{SQUARE ROOT}" in s:
-        sl = s.replace(
-            "\N{SQUARE ROOT}",
-            operator_dict["\N{SQUARE ROOT}"],
-            s.count("\N{SQUARE ROOT}"),
-        ).split()
-        for i, val in enumerate(sl):
-            if val == "**":
-                sl[i - 1], sl[i + 1] = sl[i + 1], sl[i - 1]
-        s = " ".join(sl)
-    for x in xl[:-1]:
-        s = s.replace(x, operator_dict[x], s.count(x))
+    if "\N{SQUARE ROOT}(" in s:
+        s = s.replace("\N{SQUARE ROOT}(", "sqrt(")
+    while "\N{SQUARE ROOT}" in s:
+        s = _rep(s)
+    for k, v in operator_dict.items():
+        s = s.replace(k, v)
     return s
 
 
@@ -53,7 +58,7 @@ def evaluate():
     eqn = rep(eqn)
     entry.delete(0.0, tk.END)
     try:
-        entry.insert(tk.END, eval(eqn))
+        entry.insert(tk.END, eval(eqn, globals()))
     except SyntaxError:
         entry.insert(tk.END, "INVALID INPUT")
 
