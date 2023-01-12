@@ -39,23 +39,24 @@ def _rep(s: str) -> str:
     return s2
 
 
-def rep(s: str):
+def parse_input(s: str) -> str:
+    s = s.replace(" ", "")
     if "\N{SQUARE ROOT}(" in s:
         s = s.replace("\N{SQUARE ROOT}(", "sqrt(")
     while "\N{SQUARE ROOT}" in s:
         s = _rep(s)
     for k, v in operator_dict.items():
-        s = s.replace(k, v)
+        s = s.replace(k.strip(), v.strip())
     return s
 
 
-def inp(element):
+def inp(element: str):
     entry.insert(tk.END, element)
 
 
 def evaluate():
     eqn = entry.get(0.0, tk.END)
-    eqn = rep(eqn)
+    eqn = parse_input(eqn)
     entry.delete(0.0, tk.END)
     try:
         entry.insert(tk.END, eval(eqn, globals()))
