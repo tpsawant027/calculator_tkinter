@@ -1,23 +1,9 @@
-from math import pi, e, sqrt
+from math import sqrt
+from oprs import Operator
 import tkinter as tk
 
-operator_list = [
-    ["\N{SQUARE ROOT}", "\N{GREEK SMALL LETTER PI}", "e", " \N{Circumflex Accent} "],
-    ["AC", "\N{Left Parenthesis}", "\N{Right Parenthesis}", " \N{Division Sign} "],
-    ["7", "8", "9", " \N{Multiplication Sign} "],
-    ["6", "5", "4", " \N{Plus Sign} "],
-    ["3", "2", "1", " \N{Minus Sign} "],
-    ["0", "\N{Full Stop}", "\N{Erase To the Left}", "\N{Equals Sign} "],
-]
-
-operator_dict = {
-    operator_list[2][3]: " * ",
-    operator_list[0][3]: " ** ",
-    operator_list[1][3]: " / ",
-    operator_list[4][3]: " - ",
-    operator_list[0][1]: str(pi),
-    operator_list[0][2]: str(e),
-}
+operator_list = Operator.operator_list
+operator_dict = Operator.operator_dict
 
 
 def backspace():
@@ -58,9 +44,14 @@ def evaluate():
     eqn = entry.get(0.0, tk.END)
     eqn = parse_input(eqn)
     entry.delete(0.0, tk.END)
+    glbs_dct = {
+        k: v
+        for k, v in globals().items()
+        if ((k.startswith("_") and k != "__builtins__") or k == "sqrt")
+    }
     try:
-        entry.insert(tk.END, eval(eqn, globals()))
-    except SyntaxError:
+        entry.insert(tk.END, eval(eqn, globals=glbs_dct))
+    except:
         entry.insert(tk.END, "INVALID INPUT")
 
 
